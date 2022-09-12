@@ -1,18 +1,15 @@
 FROM ruby:2.2
+RUN apt-get update -qq && apt-get install -y build-essential
 
-ENV COMMENT_DATABASE_HOST comment_db
-ENV COMMENT_DATABASE comments
 ENV APP_HOME /app
-
 RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 
-RUN apt-get update -qq \
-    && apt-get install -y build-essential \
-    && rm -r /var/lib/apt/lists/*
-
-COPY Gemfile* $APP_HOME/
+ADD Gemfile* $APP_HOME/
 RUN bundle install
-COPY . $APP_HOME
+ADD . $APP_HOME
+
+ENV COMMENT_DATABASE_HOST comment_db
+ENV COMMENT_DATABASE comments
 
 CMD ["puma"]
